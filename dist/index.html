@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Grapher</title>
+        <link
+            rel="shortcut icon"
+            href="img/default-favicon.ico"
+            type="image/x-icon"
+        />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <header>
+            <img src="img/default-favicon.ico" alt="icons" />
+            <div class="header-title">
+                <div class="title">Grapher</div>
+                <div class="sub-title">by Abhishek</div>
+            </div>
+
+            <div class="tab" id="home">Home</div>
+            <div class="tab" id="about">About</div>
+        </header>
+        <div class="calculator home-page">
+            <canvas width="600" height="600" id="canvas"></canvas>
+
+            <div class="controls">
+                <div class="navigator">
+                    <div class="functions-nav">Functions</div>
+                    <div class="table-nav">Table</div>
+                    <div class="calculator-nav">Calculator</div>
+                </div>
+
+                <div class="tabs">
+                    <div class="functions-tab">
+                        <h2>Functions</h2>
+                        <div class="functions">
+                            <div id="functions-template">
+                                y = <input type="text" />
+                                <select>
+                                    <option value="blue">Blue</option>
+                                    <option value="red">Red</option>
+                                    <option value="orange">Orange</option>
+                                    <option value="green">Green</option>
+                                    <option value="grey">Grey</option>
+                                </select>
+                                <span class="delete">x</span>
+                            </div>
+                        </div>
+                        <button class="add-function">Add Functions</button>
+                        <div class="range-window">
+                            <h2>Range Windows</h2>
+                            <input type="text" placeholder="xmin" name="xmin" />
+                            ≤ x ≤
+                            <input type="text" placeholder="xmax" name="xmax" />
+                            <br />
+
+                            <input type="text" placeholder="ymin" name="ymin" />
+                            ≤ y ≤
+                            <input type="text" placeholder="ymax" name="ymax" />
+                            <br />
+                            <button class="clear-window">Clear</button>
+                            <button class="reset-window">Reset Default</button>
+                        </div>
+                    </div>
+                    <div class="table-tab">
+                        <h2>Table</h2>
+                        <div>
+                            <table></table>
+                        </div>
+                    </div>
+
+                    <div class="calculator-tab">
+                        <div class="warning"></div>
+                        <div class="roots">
+                            <h2>Roots</h2>
+                            <p>The X-Intercept of a graph</p>
+                            Graph:
+                            <select
+                                name="expression"
+                                class="function-list"
+                            ></select>
+                            <br />
+                            Guess:
+                            <input type="text" name="guess" placeholder="x" />
+                            <br />
+                            <button>Calculate</button>
+                            <div class="root-output"></div>
+                        </div>
+                        <div class="intersection">
+                            <h2>Intersection</h2>
+                            <p>The intersections of two graphs</p>
+                            Graphs:
+                            <select
+                                name="expression1"
+                                class="function-list"
+                            ></select>
+                            <select
+                                name="expression2"
+                                class="function-list"
+                            ></select>
+                            <br />
+                            Guess:
+                            <input type="text" name="guess" placeholder="x" />
+                            <button>Calculate</button>
+                            <div class="intersection-output"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="about-page">
+            <h1>About</h1>
+            <p>
+                A graph plotting software very simple not too much complex built
+                usin javascript. Functions like polynomial, logarithmic, trignometric 
+                and exponential functions. Additionally, it can calculate the roots
+                and intercepts of the functions off of an inital guess.
+
+                We use webpack for bundling the javascript files and library called
+                <a href="https://npmjs.com/package/expr-eval">expr-eval</a>. 
+            </p>
+        </div>
+
+        <script src="main.js"></script>
+    </body>
+</html>
