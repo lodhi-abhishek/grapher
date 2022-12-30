@@ -1,0 +1,22 @@
+{
+  "name": "grapher",
+  "version": "1.0.0",
+  "description": "### Simple 2D Graph Plotting Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lodhi-abhishek/grapher.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lodhi-abhishek/grapher/issues"
+  },
+  "homepage": "https://github.com/lodhi-abhishek/grapher#readme",
+  "dependencies": {
+    "expr-eval": "^2.0.2"
+  }
+}
