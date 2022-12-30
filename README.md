@@ -8,4 +8,4 @@ and exponential functions. Additionally, it can calculate the roots
 and intercepts of the functions off of an inital guess.
 
 We use webpack for bundling the javascript files and library called
-(expr-eval)[https://npmjs.com/package/expr-eval"]. 
+[expr-eval](https://npmjs.com/package/expr-eval). 
