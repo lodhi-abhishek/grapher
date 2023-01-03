@@ -38,17 +38,50 @@ function logify(expression) {
     // let log(x) be equivalent to log10(x)
     expression = expression.replace(/log\(/g, "log10(");
 
-    let logRegex = /log\d+\([^)]+\)/; 
+    let logRegex = /log\d+\([^])]+)/;
     let logExpressions = expression.match(logRegex);
-
-    while(logExpressions) {
-        for(let i = 0; i < logExpressions; i++) {
-            logExpressions[i] = fixBrackets(logExpression[i]);
-            let logBase = /log(\d+)\([^)]+\)/
+    while (logExpressions) {
+        for (let i = 0; i < logExpressions.length; i++) {
+            logExpressions[i] = fixBrackets(logExpressions[i]);
+            let logBase = /log(\d+)\([^)]+\)/.exec(logExpressions[i])[1];
+            let logArg = fixBrackets(/log(\d+)\([^)]+\)/).exec(
+                logExpressions[i][1]
+            );
+            let oldExpressions = expression;
+            expression = expression.replace(
+                logExpressions[i],
+                `(ln(${logArg})/ln(${logBase}))`
+            );
+            if (oldExpressions == expression) {
+                return expression;
+            }
         }
+        logExpressions = expression.match(logRegex);
     }
+    return expression;
 }
 
 function fixBrackets(expression) {
+    let openBrackets = 0;
+    let closingBrackets = 0;
 
+    for (let i = 0; i < expression.length; i++) {
+        if (expression[i] == "(") {
+            openBrackets++;
+        } else if (expression[i] == ")") {
+            closingBrackets++;
+        }
+    }
+
+    while (openBrackets > closingBrackets) {
+        expression += ")";
+        closingBrackets++;
+    }
+    while (closingBrackets > openBrackets) {
+        expression = "(" + expression;
+        openBrackets++;
+    }
+    return expression;
 }
+
+export { parseFunction };
