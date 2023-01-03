@@ -1,3 +1,7 @@
+:root {
+    --white-background: rgb(230, 221, 221);
+}
+
 body {
     padding: 0;
     margin: 0;
@@ -36,8 +40,136 @@ button {
     border: none;
     text-align: center;
     font-size: 15px;
+    border-radius: 4px;
 }
 
 button:hover {
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.79);
+}
+
+#canvas {
+    width: 45%;
+    height: 45%;
+}
+
+.title {
+    font-size: 24px;
+}
+
+.tab {
+    margin: 0 20px;
+    cursor: pointer;
+}
+
+.calculator {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+}
+
+.about-page {
+    margin: 50px;
+}
+
+/* Calculator controls*/
+.controls {
+    display: flex;
+    flex-direction: column;
+    width: 500px;
+    align-items: center;
+}
+
+/* Funcutios table calculator*/
+.navigator {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+}
+
+.navigator > div { 
+    size: 15px;
+    margin: 0 12px;
+    background-color: var(--white-background);
+    padding: 10px;
+    border-radius: 4px;
+}
+
+
+/* Style in functions tab content*/
+.functions {
+    display: flex;
+    flex-direction: column;
+    height: 200px;
+    overflow-y: auto;
+    width: 400px;
+    align-items: center;
+}
+
+.functions-tabs {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.delete {
+    cursor: pointer;
+    color: grey;
+    margin-left: 5px;
+}
+
+.functions-tabs select {
+    padding: 5px 0;
+    margin: 10px 0;
+    font-size: 15px;
+}
+
+.range-window {
+    margin: 30px 0;
+    text-align: center;
+}
+
+.range-window input {
+    width: 80px;
+    height: 10px;
+    padding: 6px;
+    margin: 2px;
+}
+
+.table-tab {
+    text-align: center;
+}
+
+.calculator-tab input {
+    margin: 10px 0;
+    padding: 5px;
+}
+
+.calculator-tab select {
+    width: 80px;
+    margin: 5px;
+    padding: 5px;
+}
+
+.warning {
+    background: rgb(231, 62, 62);
+    color: white;
+    border-radius: 4px;
+}
+
+table {
+  margin-top: 30px;
+  width: 300px;
+  border-collapse: collapse;
+  border: 1px solid black;
+}
+
+th {
+  border: 1px solid black;
+}
+
+td {
+  border: 1px solid black;
+  border-left: 1px solid black;
 }
