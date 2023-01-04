@@ -38,7 +38,7 @@ function logify(expression) {
     // let log(x) be equivalent to log10(x)
     expression = expression.replace(/log\(/g, "log10(");
 
-    let logRegex = /log\d+\([^])]+)/;
+    let logRegex = /log\d+\([^)]+\)/;
     let logExpressions = expression.match(logRegex);
     while (logExpressions) {
         for (let i = 0; i < logExpressions.length; i++) {

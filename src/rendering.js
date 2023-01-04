@@ -58,8 +58,8 @@ function roundTickMark(number) {
 
 // Scale marks to x and y axis
 function findAutoScale() {
-    let xScale = view.xScale();
-    let yScale = view.yScale();
+    let xScale = view.xScale;
+    let yScale = view.yScale;
 
     if (
         view.xMax <= view.xMin ||
@@ -163,8 +163,8 @@ function drawAxes() {
         if (i == 0) continue;
 
         let xDisplayValue = roundTickMark(i * view.xScale);
-        let xDraw = toPrecision(i * view.xScale, 0).x;
-        let yDraw = toPrecision(0, 0).y;
+        let xDraw = toPixelCoord(i * view.xScale, 0).x;
+        let yDraw = toPixelCoord(0, 0).y;
 
         // Marks and Labels
         draw.line(

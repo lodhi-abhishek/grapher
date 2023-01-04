@@ -141,3 +141,5 @@ function addCalculateTabListeners() {
             }
         });
 }
+
+export { addCalculateTabListeners , renderCalculateTab}
