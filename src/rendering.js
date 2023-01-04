@@ -1,5 +1,6 @@
-import { Draw } from "./drawing";
-import { parseFunction } from "./functionParsing";
+// Problem: computers with bigger monitors
+import { Draw } from "./drawing.js";
+import { parseFunction } from "./functionParsing.js";
 import { renderTable } from "./table.js";
 
 let canvas = document.getElementById("canvas");
@@ -12,30 +13,30 @@ canvas.height *= canvas.scale;
 
 let draw = new Draw(canvas);
 let view = {
-    xScale: 4, // diff in x axix
-    yScale: 4, // diff in y axis
-    xMin: -22.5, // min value in neg x axis
-    xMax: 22.5, // min value in postive x axis
-    yMin: -22.5, // same as above but for y axis
+    xScale: 4,
+    yScale: 4,
+    xMin: -22.5,
+    xMax: 22.5,
+    yMin: -22.5,
     yMax: 22.5,
     functions: {},
     point: {},
 };
 let expression = "";
 
-// Converstino of units to pixel
+// Units to px
 function toPixelCoord(x, y) {
     let pixelX = ((x - view.xMin) / (view.xMax - view.xMin)) * canvas.width;
     let pixelY = ((view.yMax - y) / (view.yMax - view.yMin)) * canvas.width;
     return { x: pixelX, y: pixelY };
 }
 
-// Rounding upto significant digit
+// Round scale to one or two significant digits
 function roundScale(scale) {
     if (scale >= 1 && scale <= 9) {
-        return parseFunction(scale.toPrecision(1));
+        return parseFloat(scale.toPrecision(1));
     } else {
-        return parseFunction(scale.toPrecision(2));
+        return parseFloat(scale.toPrecision(2));
     }
 }
 
@@ -52,11 +53,11 @@ function roundTickMark(number) {
         return parseFloat(number.toPrecision(4));
     }
     if (Math.abs(number) >= 100000) {
-        return number.toPrecision(2).replace("e", "*10^");
+        return number.toPrecision(2).replace("e+", "*10^");
     }
 }
 
-// Scale marks to x and y axis
+// Find a scale with about 10 tick marks on x and y axis
 function findAutoScale() {
     let xScale = view.xScale;
     let yScale = view.yScale;
@@ -67,15 +68,13 @@ function findAutoScale() {
         view.xScale <= 0 ||
         view.yScale <= 0
     ) {
-        console.log("Error: invalid settings");
+        console.log("Error: invalid window settings");
         xScale = 4;
         yScale = 4;
     }
-
     if (Math.abs(view.xScale) == Infinity) {
         xScale = 4;
-    }
-    if (Math.abs(view.yScale) == Infinity) {
+    } else if (Math.abs(view.yScale) == Infinity) {
         yScale = 4;
     }
 
@@ -101,72 +100,55 @@ function findAutoScale() {
     return { xScale, yScale };
 }
 
-// Drawing the Grid lines
 function drawGridLines() {
     ctx.lineWidth = canvas.scale;
-
     let xTickRange = {
         min: Math.ceil(view.xMin / view.xScale),
-        max: Math.floor(view.yMax / view.yScale),
+        max: Math.floor(view.xMax / view.xScale),
     };
-
     let yTickRange = {
         min: Math.ceil(view.yMin / view.yScale),
-        max: Math.ceil(view.yMax / view.yScale),
+        max: Math.floor(view.yMax / view.yScale),
     };
-
     for (let i = xTickRange.min; i <= xTickRange.max; i++) {
         if (i == 0) continue;
-
         let xDraw = toPixelCoord(i * view.xScale, 0).x;
         let yDraw = toPixelCoord(0, 0).y;
-
         draw.line(xDraw, 0, xDraw, canvas.height, "lightgray");
     }
-
     for (let i = yTickRange.min; i <= yTickRange.max; i++) {
         if (i == 0) continue;
-
         let xDraw = toPixelCoord(0, 0).x;
         let yDraw = toPixelCoord(0, i * view.yScale).y;
-
         draw.line(0, yDraw, canvas.width, yDraw, "lightgray");
     }
 }
 
-// Drawing the axis
+// Draws axes
 function drawAxes() {
     ctx.fillStyle = "black";
     ctx.lineWidth = 1.5 * canvas.scale;
-
-    /* Y axis */
+    // y axis
     draw.line(0, toPixelCoord(0, 0).y, canvas.width, toPixelCoord(0, 0).y);
+    // x axis
+    draw.line(toPixelCoord(0, 0).x, 0, toPixelCoord(0, 0).x, canvas.height);
 
-    /* X axis */
-    draw.line(toPixelCoord(0, 0).x, 0, 0, toPixelCoord(0, 0).x, canvas.height);
-
-    /* Marks on X axis
-     * textBaseline to make the line in middle of axis
-     * Look up https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline
-     * eg: min -2 and max: 3 signifies 2 ticks right of x-axies and 3 ticks left
-     */
+    // ticks on x axis
     ctx.textBaseline = "middle";
-
+    // ex: min: -2, max: 3, signifies 2 ticks right of x axis, and 3 ticks left
     let xTickRange = {
         min: Math.ceil(view.xMin / view.xScale),
-        max: Math.ceil(view.xMax / view.xScale),
+        max: Math.floor(view.xMax / view.xScale),
     };
 
     for (let i = xTickRange.min; i <= xTickRange.max; i++) {
         ctx.textAlign = "center";
 
         if (i == 0) continue;
-
         let xDisplayValue = roundTickMark(i * view.xScale);
         let xDraw = toPixelCoord(i * view.xScale, 0).x;
         let yDraw = toPixelCoord(0, 0).y;
-
-        // Marks and Labels
+        // ticks and labels
         draw.line(
             xDraw,
             yDraw + 5 * canvas.scale,
@@ -176,24 +158,21 @@ function drawAxes() {
         draw.text(xDisplayValue, xDraw, yDraw + 15 * canvas.scale);
     }
 
-    /* Marks on y axis
-     * eg: min: - 2 and max: -3 signifies 2 ticks above y axis and 3 ticks below
-     */
-
+    // ticks on y axis
+    // ex: min: -2, max: 3, signifies 2 ticks above y axis, and 3 ticks below
     let yTickRange = {
         min: Math.ceil(view.yMin / view.yScale),
-        max: Math.ceil(view.yMax / view.yScale),
+        max: Math.floor(view.yMax / view.yScale),
     };
 
     for (let i = yTickRange.min; i <= yTickRange.max; i++) {
-        ctx.textAlign = "end";
-
         if (i == 0) continue;
+        ctx.textAlign = "end";
 
         let yDisplayValue = roundTickMark(i * view.yScale);
         let xDraw = toPixelCoord(0, 0).x;
         let yDraw = toPixelCoord(0, i * view.yScale).y;
-
+        // ticks and labels
         draw.line(
             xDraw - 5 * canvas.scale,
             yDraw,
@@ -208,22 +187,17 @@ function drawGraph(expr, color = "black") {
     let precision = 500;
     let previousDerivative = 0;
     let previousX = 0;
-
     for (let i = 0; i < precision; i++) {
         let currentX = view.xMin + (i / precision) * (view.xMax - view.xMin);
         let nextX = view.xMin + ((i + 1) * (view.xMax - view.xMin)) / precision;
         let currentY = expr.evaluate({ x: currentX });
         let nextY = expr.evaluate({ x: nextX });
 
-        /* expr.evaluate expr-eval node module*/
-
         if (!currentY && !nextY) {
             continue;
         }
 
-        /* When the derivative of the graph changes from positive to negative,
-         * assume that it's trying to graph an asymptote
-         */
+        // When the derivative of the graph changes from positive to negative, assume that it's trying to graph an asymptote
         let currentDerivative = (nextY - currentY) / (nextX - currentX);
         if (currentDerivative * previousDerivative >= 0) {
             draw.line(
@@ -233,11 +207,9 @@ function drawGraph(expr, color = "black") {
                 toPixelCoord(0, nextY).y,
                 color
             );
-            /* Graphs more precisely around asymptotes.
-             * Fixes issue where lines that approach asymptotes suddenly cut off
-             */
+            // Graphs more precisely around asymptotes. Fixes issue where lines that approach asymptotes suddenly cut off
         } else {
-            /* If curve approaches asymptote from left side */
+            // If curve approaches asymptote from left side
             if (
                 Math.abs(previousDerivative) < Math.abs(currentDerivative) ||
                 !currentDerivative
@@ -277,12 +249,10 @@ function drawGraph(expr, color = "black") {
 function drawPoint(x, y, color) {
     let pointX = toPixelCoord(x, 0).x;
     let pointY = toPixelCoord(0, y).y;
-
     draw.colorCircle(pointX, pointY, 5, color);
     ctx.textAlign = "left";
-
     draw.text(
-        `${roundTickMark(x)}, ${roundTickMark(y)}`,
+        `(${roundTickMark(x)}, ${roundTickMark(y)})`,
         pointX + 10,
         pointY + 15
     );

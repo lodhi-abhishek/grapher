@@ -1,52 +1,48 @@
-import { view } from "./rendering";
-import { parseFunction } from "./functionParsing";
-import { roundvalue } from "./math";
-
+import { view } from './rendering.js';
+import { parseFunction } from './functionParsing.js';
+import { roundValue } from './math.js';
 
 function renderTable() {
-    let tableElement = document.querySelector('table');
+  let tableElement = document.querySelector('table');
 
-    /* Table head/labels */
-    tableElement.innerHTML = '';
-    let headerRow = document.createElement('tr');
-    let xLabel = document.createElement('th');
+  // table headers / labels
+  tableElement.innerHTML = '';
+  let headerRow = document.createElement('tr');
+  let xLabel = document.createElement('th');
+  xLabel.textContent = 'x';
+  headerRow.appendChild(xLabel);
 
-    xLabel.textContent = 'x';
-    headerRow.appendChild(xLabel);
+  // values of tables
+  for (let key in view.functions) {
+    let tableHeader = document.createElement('th');
+    tableHeader.textContent = key;
+    headerRow.appendChild(tableHeader);
+  }
+  tableElement.appendChild(headerRow);
 
+  let tblMin = Math.ceil(view.xMin/view.xScale) * view.xScale;
+  let tblMax = Math.floor(view.xMax/view.xScale) * view.xScale;
+  let numberOfValues = (tblMax - tblMin)/view.xScale;
 
-    /* Values of Table */
+  for (let i = 0; i <= numberOfValues; i++) {
+    let x = tblMin + (tblMax - tblMin) * i/numberOfValues;
+    let tableRow = document.createElement('tr');
+    let xColumn = document.createElement('td');
+    xColumn.textContent = roundValue(x);
+    tableRow.appendChild(xColumn);
+
     for (let key in view.functions) {
-        let tableHeader = document.createElement('th');
-        tableHeader.textContent = key;
-        headerRow.appendChild(tableHeader);
+      let yColumn = document.createElement('td');
+      let expr = parseFunction(view.functions[key].expression);
+      if (!expr) {
+        continue
+      }
+      yColumn.textContent = roundValue(expr.evaluate({x}));
+
+      tableRow.appendChild(yColumn);
     }
-    tableElement.appendChild(headerRow);
-
-    let tblMin = Math.ceil(view.xMin/view.xScale) * view.xScale;
-    let tblMax = Math.floor(view.xMax/view.xScale) * view.xScale;
-    let numberofValues = (tblMax - tblMin)/view.xScale;
-
-
-    for (let i = 0 ; i <= numberofValues; i++) {
-        let x = tblMin + (tblMax - tblMin) * i/numberofValues;
-        let tableRow = document.createElement('tr');
-        let xColumn = document.createElement('td');
-        xColumn.textContent = roundvalue(x);
-        tableRow.appendChild(xColumn);
-
-        for ( let key in view.functions) {
-            let yColumn = document.createElement('td');
-            let expr = parseFunction(view.functions[key].expression);
-            if(!expr) {
-                continue;
-            }
-
-            yColumn.textContent = roundvalue(expr.evaluate({x}));
-            tableRow.appendChild(yColumn);
-        }
-        tableElement.appendChild(tableRow);
-    }
+    tableElement.appendChild(tableRow);
+  }
 }
 
 export { renderTable };

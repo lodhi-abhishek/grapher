@@ -1,7 +1,6 @@
-import { render, canvas } from "./rendering";
-import { eventHandling, renderTab } from "./eventHandling";
+import { render, canvas } from './rendering.js';
+import {eventHandling, renderTab} from './eventHandling.js';
 
-
-renderTab('functions');
+renderTab('function');
 render();
 eventHandling();

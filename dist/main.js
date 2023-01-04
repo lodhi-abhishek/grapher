@@ -13,151 +13,112 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addCalculateTabListeners": () => (/* binding */ addCalculateTabListeners),
 /* harmony export */   "renderCalculateTab": () => (/* binding */ renderCalculateTab)
 /* harmony export */ });
-/* harmony import */ var _functionParsing__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./functionParsing */ "./src/functionParsing.js");
-/* harmony import */ var _rendering__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./rendering */ "./src/rendering.js");
-/* harmony import */ var _math__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./math */ "./src/math.js");
+/* harmony import */ var _functionParsing_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./functionParsing.js */ "./src/functionParsing.js");
+/* harmony import */ var _rendering_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./rendering.js */ "./src/rendering.js");
+/* harmony import */ var _math_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./math.js */ "./src/math.js");
 
 
 
 
 function calculateRoot(f, guess) {
-    let root = newtonsMethod(f, guess);
-    let expr = (0,_functionParsing__WEBPACK_IMPORTED_MODULE_0__.parseFunction)();
-    if (Math.abs(expr.evaluate({ x: root })) < Math.pow(10, -10)) {
-        return root;
-    } else {
-        return null;
-    }
+  let root = newtonsMethod(f, guess);
+  let expr = (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f);
+  if (Math.abs(expr.evaluate({x: root})) < Math.pow(10, -10)) {
+    return root;
+  } else {
+    return null;
+  }
 }
 
-// Finding the intersection of two grpahs {f and g}
+// Calculate the intercections of two graphs, f and g, by calculating the root of f - g.
 function calculateIntersection(f1, f2, guess, depth = 100) {
-    let expr1 = (0,_functionParsing__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f1);
-    let expr2 = (0,_functionParsing__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f2);
+  let expr1 = (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f1);
+  let expr2 = (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f2);
 
-    if (depth == 0) {
-        if (
-            Math.abs(
-                expr1.evaluate({ x: guess }) - expr2.evaluate({ x: guess })
-            ) < Math.pow(10, -10)
-        ) {
-            return { x: guess, y: expr1.evaluate({ x: guess }) };
-        } else {
-            return null;
-        }
+  if (depth == 0) {
+    if (Math.abs(expr1.evaluate({x: guess}) - expr2.evaluate({x: guess})) < Math.pow(10, -10)) {
+      return {x: guess, y: expr1.evaluate({x: guess})}
+    } else {
+      return null;
     }
+  }
 
-    let x = guess;
-    let y1 = expr1.evaluate({ x });
-    let y2 = expr2.evaluate({ x });
-    let y = y1 - y2;
-    let deltaX = Math.pow(10, -5);
-    let deltaY =
-        expr1.evaluate({ x: x + deltaX }) -
-        expr1.evaluate({ x: x + deltaX }) -
-        y;
-    let derivative = deltaY / deltaX;
-    let nextGuess = x - y / derivative;
-
-    return calculateIntersection(f1, f2, nextGuess, depth - 1);
+  let x = guess;
+  let y1 = expr1.evaluate({x});
+  let y2 = expr2.evaluate({x});
+  let y = y1 - y2;
+  let deltaX = Math.pow(10, -5);
+  let deltaY = expr1.evaluate({x: x + deltaX}) - expr2.evaluate({x: x + deltaX}) - y;
+  let derivative = deltaY/deltaX;
+  let nextGuess = x - y/derivative;
+  return calculateIntersection(f1, f2, nextGuess, depth - 1);
 }
 
-// Newtons Methods for roots
-
+// Approximates the x-intercept of a function given a guess
 function newtonsMethod(f, guess, depth = 100) {
-    if (depth == 0) {
-        return guess;
-    }
-
-    let expr = (0,_functionParsing__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f);
-    let x = guess;
-    let y = expr.evaluate({ x });
-    let deltaX = Math.pow(10, -5);
-    let deltaY = expr.evaluate({ x: x + deltaX }) - y;
-    let derivative = deltaY / deltaX;
-    let nextGuess = x - y / derivative;
-
-    return newtonsMethod(f, nextGuess, depth, -1);
+  if (depth == 0) {
+    return guess;
+  }
+  let expr = (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_0__.parseFunction)(f);
+  let x = guess;
+  let y = expr.evaluate({x});
+  let deltaX = Math.pow(10, -5);
+  let deltaY = expr.evaluate({x: x + deltaX}) - y;
+  let derivative = deltaY/deltaX;
+  let nextGuess = x - y/derivative;
+  return newtonsMethod(f, nextGuess, depth - 1);
 }
 
 function renderCalculateTab() {
-    let selects = document.querySelectorAll(".function-list");
-    let enteredFunction = false;
-    for (let i = 0; i < selects.length; i++) {
-        let selectElement = selects[i];
-        selectElement.innerHTML = "";
-        for (let key in _rendering__WEBPACK_IMPORTED_MODULE_1__.view.functions) {
-            enteredFunction = true;
-            let optionElement = document.createElement("option");
-            let expression = _rendering__WEBPACK_IMPORTED_MODULE_1__.view.functions[key].expression;
-
-            optionElement.value = expression;
-            optionElement.textContent = expression;
-            selectElement.appendChild(optionElement);
-        }
+  let selects = document.querySelectorAll('.function-list');
+  let enteredFunction = false;
+  for (let i = 0; i < selects.length; i++) {
+    let selectElement = selects[i];
+    selectElement.innerHTML = '';
+    for (let key in _rendering_js__WEBPACK_IMPORTED_MODULE_1__.view.functions) {
+      enteredFunction = true;
+      let optionElement = document.createElement('option');
+      let expression = _rendering_js__WEBPACK_IMPORTED_MODULE_1__.view.functions[key].expression;
+      optionElement.value = expression;
+      optionElement.textContent = expression;
+      selectElement.appendChild(optionElement);
     }
-
-    if (!enteredFunction) {
-        document.querySelector(".calculator-tab .warning").textContetnt =
-            "Please Enter a function in the Functions tab";
-    } else {
-        document.querySelector(".calculator-tab .warning").textContent = "";
-    }
+  }
+  if (!enteredFunction) {
+    document.querySelector('.calculate-tab .warning').textContent = 'Please enter a function in the "Functions" tab.';
+  }
+  else {
+    document.querySelector('.calculate-tab .warning').textContent = '';
+  }
 }
 
 function addCalculateTabListeners() {
-    document
-        .querySelector(".roots > button")
-        .addEventListener("click", function () {
-            let outputDiv = document.querySelector(".roots > .root-output");
-            let guess = parseFloat(
-                document.querySelector('.interesections > input[name="guess"]')
-                    .value
-            );
-            let expression = document.querySelector(
-                '.roots > select[name="expression"]'
-            ).value;
-            let root = calculateRoot(expression, guess);
+  // Calculate root button
+  document.querySelector('.roots > button').addEventListener('click', function() {
+    let outputDiv = document.querySelector('.roots > .root-output');
+    let guess = parseFloat(document.querySelector('.roots > input[name="guess"]').value);
+    let expression = document.querySelector('.roots > select[name="expression"]').value;
+    let root = calculateRoot(expression, guess);
+    if (root != null) {
+      outputDiv.textContent = `Root: (${(0,_math_js__WEBPACK_IMPORTED_MODULE_2__.roundValue)(root, 6)}, 0)`;
+    } else {
+      outputDiv.textContent = 'Root not found';
+    }
+  });
 
-            if (root != null) {
-                outputDiv.textContent = `Root: (${(0,_math__WEBPACK_IMPORTED_MODULE_2__.roundvalue)(root, 6)}), 0`;
-            } else {
-                outputDiv.textContent = "Root not Found";
-            }
-        });
+  document.querySelector('.intersections > button').addEventListener('click', function() {
+    let outputDiv = document.querySelector('.intersections > .intersection-output');
+    let guess = parseFloat(document.querySelector('.intersections > input[name="guess"]').value);
+    let expression1 = document.querySelector('.intersections > select[name="expression1"]').value;
+    let expression2 = document.querySelector('.intersections > select[name="expression2"]').value;
+    let intersection = calculateIntersection(expression1, expression2, guess);
 
-    document
-        .querySelector(".intersection > button")
-        .addEventListener("click", function () {
-            let outputDiv = document.querySelector(
-                ".intersection > .intersection-output"
-            );
-            let guess = parseFloat(
-                document.querySelector('.intersection > input[name="guess"]')
-                    .value
-            );
-            let expression1 = document.querySelector(
-                '.intersection > select[name="expression1"]'
-            ).value;
-            let expression2 = document.querySelector(
-                '.intersection > select[name="expression2"]'
-            ).value;
-            let intersection = calculateIntersection(
-                expression1,
-                expression2,
-                guess
-            );
-
-            if (intersection != null) {
-                outputDiv.textContent = `Intersection: (${roundValue(
-                    intersection.x,
-                    6
-                )}, ${roundValue(intersection.y, 6)})`;
-            } else {
-                outputDiv.textContent =
-                    "Intersection not found or graphs are equivalent";
-            }
-        });
+    if (intersection != null) {
+      outputDiv.textContent = `Intersection: (${(0,_math_js__WEBPACK_IMPORTED_MODULE_2__.roundValue)(intersection.x, 6)}, ${(0,_math_js__WEBPACK_IMPORTED_MODULE_2__.roundValue)(intersection.y, 6)})`;
+    } else {
+      outputDiv.textContent = 'Intersection not found or graphs are equivalent';
+    }
+  });
 }
 
 
@@ -174,50 +135,40 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "Draw": () => (/* binding */ Draw)
 /* harmony export */ });
+// Drawing module
 function Draw(canvas) {
-    this.canvas = canvas;
-    this.ctx = canvas.getContext("2d");
+  this.canvas = canvas;
+  this.ctx = canvas.getContext('2d');
 }
 
-/*
-Draw.prototype
-Javascript Object Prototype https://www.w3schools.com/js/js_object_prototypes.asp
-*/
+Draw.prototype.fill = function(color) {
+  this.canvas.fillStyle = color;
+}
 
-Draw.prototype.fill = function (color) {
-    this.canvas.fillStyle = color; // Fill the color
-};
+Draw.prototype.line = function(x1, y1, x2, y2, color = 'black') {
+  this.ctx.beginPath();
+  this.ctx.moveTo(x1, y1);
+  this.ctx.lineTo(x2, y2);
+  this.ctx.strokeStyle = color;
+  this.ctx.stroke();
+}
 
-Draw.prototype.line = function (x1, y1, x2, y2, color = "black") {
-    this.ctx.beginPath();
-    this.ctx.moveTo(x1, y1); //start corrdinate
-    this.ctx.lineTo(x2, y2); //stop corridinate
-    this.ctx.strokeStyle = color;
-    this.ctx.stroke(); // draw between corridinate
-};
+Draw.prototype.text = function(string, x, y, size = 10 * canvas.scale) {
+  this.ctx.font = size + 'px Arial';
+  this.ctx.fillText(string, x, y);
+}
 
-Draw.prototype.text = function (string, x, y, size = 10 * canvas.scale) {
-    this.ctx.font = size + "px Arial";
-    this.ctx.fillText(string, x, y);
-};
+Draw.prototype.rect = function(x, y, width, height, color = 'white') {
+  this.ctx.fillStyle = color;
+  this.ctx.fillRect(x, y, width, height);
+}
 
-Draw.prototype.rect = function (x, y, width, height, color = "white") {
-    this.ctx.fillStyle = color;
-    this.ctx.fillRect(x, y, width, height);
-};
-
-Draw.prototype.colorCircle = function (
-    centerX,
-    centerY,
-    radius,
-    color = "black"
-) {
-    this.ctx.fillStyle = color;
-    this.ctx.beginPath();
-    this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-    this.ctx.fill();
-};
-
+Draw.prototype.colorCircle = function(centerX, centerY, radius, color = 'black') {
+  this.ctx.fillStyle = color;
+  this.ctx.beginPath();
+  this.ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+  this.ctx.fill();
+}
 
 
 
@@ -249,17 +200,17 @@ function mousePos(e) {
     let rect = _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.getBoundingClientRect();
     return {
         x: ((e.clientX - rect.left) * _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.width) / (rect.right - rect.left),
-        y: ((e.clienty - rect.top) * _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.height) / (rect.bottom - rect.top),
+        y: ((e.clientY - rect.top) * _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.height) / (rect.bottom - rect.top),
     };
 }
 
+// px to units
 function toUnitCoord(x, y) {
     let graphWidth = _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax - _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin;
     let graphHeight = _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax - _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin;
-
     return {
         x: _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin + (x / _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.width) * graphWidth,
-        y: _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin - (y / _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.height) * graphHeight,
+        y: _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax - (y / _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.height) * graphHeight,
     };
 }
 
@@ -267,35 +218,34 @@ function addFunction() {
     numOfFunctions++;
     let functionName = "y" + numOfFunctions;
     let functionTemplate = document
-        .getElementById("functions-template")
+        .getElementById("function-template")
         .cloneNode(true);
 
     let input = functionTemplate.querySelector("input");
     let select = functionTemplate.querySelector("select");
     let colors = [];
 
-    /* Arrays of Colors*/
+    // Creates an array of the possible colors
     for (let i = 0, options = select.children; i < options.length; i++) {
         colors.push(options[i].value);
     }
-
-    /*Each has different color */
+    // Make sure the function starts with a different color
     let functionColor = colors[(numOfFunctions - 1) % colors.length];
 
     functionTemplate.removeAttribute("id");
     functionTemplate.classList.add(functionName);
-
-    // Add Attribute
+    // Add attributes
     input.name = functionName;
     input.placeholder = functionName;
     select.name = functionName;
     select.value = functionColor;
 
+    // Insert the function before the button
     document.querySelector(".functions").appendChild(functionTemplate);
-    // Update the graph
 
+    /* When input is updated, update the graph */
     let event1 = input.addEventListener("input", graphFunctions);
-    let event2 = input.addEventListener("change", graphFunctions);
+    let event2 = select.addEventListener("change", graphFunctions);
     let event3 = functionTemplate
         .querySelector(".delete")
         .addEventListener("click", function () {
@@ -307,14 +257,15 @@ function addFunction() {
         });
 }
 
-/* Take input from DOM and add it to view variable */
+addFunction();
+
+// Retrieve all inputs from the DOM, and add it to the view variable
 function graphFunctions() {
     for (let i = 1; i <= numOfFunctions; i++) {
         let functionName = "y" + i;
         let functionInput = document.querySelector(
-            '.functions input[name="${functionName}"]'
+            `.functions input[name="${functionName}"]`
         );
-
         if (functionInput) {
             let functionObject = (_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.functions[functionName] = {});
             functionObject.expression = functionInput.value;
@@ -328,9 +279,9 @@ function graphFunctions() {
     (0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
 }
 
-// Render Calculator options
+// Render calculator options tab (graph, table, calculate)
 function renderTab(tabName) {
-    let tabList = ["functions", "table", "calculator"];
+    let tabList = ["function", "table", "calculate"];
     for (let i = 0; i < tabList.length; i++) {
         try {
             document.querySelector(`.${tabList[i]}-nav`).style.backgroundColor =
@@ -340,8 +291,7 @@ function renderTab(tabName) {
             console.log(`Tab not found: ${tabList[i]}.`);
         }
     }
-
-    if (tabName == "calculator") {
+    if (tabName == "calculate") {
         (0,_calculate_js__WEBPACK_IMPORTED_MODULE_2__.renderCalculateTab)();
     }
     document.querySelector(`.${tabName}-nav`).style.backgroundColor =
@@ -349,13 +299,13 @@ function renderTab(tabName) {
     document.querySelector(`.${tabName}-tab`).style.display = "";
 }
 
+// Render tabs in the navbar
 function renderNavBarTab(tabName) {
     let tabList = ["home", "about"];
-    for (let i = 0; i < tabList; i++) {
+    for (let i = 0; i < tabList.length; i++) {
         let tab = tabList[i];
         let tabDiv = document.querySelector("." + tab + "-page");
         let tabLinkDiv = document.getElementById(tab);
-
         if (tab == tabName) {
             tabDiv.style.display = "";
             tabLinkDiv.style.fontWeight = "bold";
@@ -380,6 +330,7 @@ function addCanvasListeners() {
         isDragging = false;
     });
 
+    // Handles dragging; moves window opposite of dragged direction
     _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.addEventListener("mousemove", function (e) {
         if (isDragging) {
             let currentPos = mousePos(e);
@@ -392,15 +343,15 @@ function addCanvasListeners() {
 
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin -= xDiff;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax -= xDiff;
-            _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax -= yDiff;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin -= yDiff;
+            _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax -= yDiff;
 
             draggedPoint = currentPos;
             (0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
         }
     });
 
-    // For zooming in and out
+    // Zooming in and out
     _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.addEventListener("wheel", function (e) {
         e.preventDefault();
         let currentPos = mousePos(e);
@@ -409,16 +360,17 @@ function addCanvasListeners() {
         let distFromLeft = gridPos.x - _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin;
         let distFromRight = _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax - gridPos.x;
         let distFromTop = _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax - gridPos.y;
-        let distFromBottom = gridPos - y - _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin;
+        let distFromBottom = gridPos.y - _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin;
         let factor = 0.05;
-
-        // Zoom-Out
+        // zoom out
         if (e.deltaY > 0) {
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin -= distFromLeft * factor;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax += distFromRight * factor;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin -= distFromBottom * factor;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax += distFromTop * factor;
-        } else if (e.deltaY < 0) {
+        }
+        // zoom in
+        else if (e.deltaY < 0) {
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin += distFromLeft * factor;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax -= distFromRight * factor;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin += distFromBottom * factor;
@@ -427,18 +379,15 @@ function addCanvasListeners() {
         (0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
     });
 
-    // Show Points on a Graph Closest to the Cursor
-
+    // Trace functionality; show the point on a graph closest to the cursor
     _rendering_js__WEBPACK_IMPORTED_MODULE_0__.canvas.addEventListener("mousemove", function (e) {
         let mousePosX = toUnitCoord(mousePos(e).x, 0).x;
         let mousePosY = toUnitCoord(0, mousePos(e).y).y;
         let pointY;
         let pointColor;
-
         for (let key in _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.functions) {
             let expr = (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.functions[key].expression);
             let y = expr.evaluate({ x: mousePosX });
-
             if (
                 y > _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin &&
                 y < _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax &&
@@ -453,8 +402,7 @@ function addCanvasListeners() {
                 }
             }
         }
-
-        // Line the Point
+        // Draw point
         if (pointY && pointColor) {
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.point.x = mousePosX;
             _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.point.y = pointY;
@@ -474,45 +422,60 @@ function addCanvasListeners() {
 function eventHandling() {
     addCanvasListeners();
 
+    // "Add Function" button
     document
-        .querySelector('button[class="add-function')
+        .querySelector('button[class="add-function"]')
         .addEventListener("click", function () {
             addFunction();
         });
 
-let windowElements = ['x-min', 'x-max', 'y-min', 'y-max', 'x-scale', 'y-scale'];
-  for (let i = 0; i < windowElements.length; i++) {
-    document.querySelector(`input[name="${windowElements[i]}"]`).addEventListener('input', function() {
-      let xMin = document.querySelector('input[name="x-min"]').value;
-      let xMax = document.querySelector('input[name="x-max"]').value;
-      let xScale = parseFloat(document.querySelector('input[name="x-scale"]').value);
-      let yMin = document.querySelector('input[name="y-min"]').value;
-      let yMax = document.querySelector('input[name="y-max"]').value;
-      let yScale = parseFloat(document.querySelector('input[name="y-scale"]').value);
+    // event listeners for the window
+    let windowElements = [
+        "x-min",
+        "x-max",
+        "y-min",
+        "y-max",
+        "x-scale",
+        "y-scale",
+    ];
+    for (let i = 0; i < windowElements.length; i++) {
+        document
+            .querySelector(`input[name="${windowElements[i]}"]`)
+            .addEventListener("input", function () {
+                let xMin = document.querySelector('input[name="x-min"]').value;
+                let xMax = document.querySelector('input[name="x-max"]').value;
+                let xScale = parseFloat(
+                    document.querySelector('input[name="x-scale"]').value
+                );
+                let yMin = document.querySelector('input[name="y-min"]').value;
+                let yMax = document.querySelector('input[name="y-max"]').value;
+                let yScale = parseFloat(
+                    document.querySelector('input[name="y-scale"]').value
+                );
 
-      if (xMin && xMax && parseFloat(xMin) < parseFloat(xMax)) {
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax = parseFloat(xMax);
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin = parseFloat(xMin);
-      }
+                if (xMin && xMax && parseFloat(xMin) < parseFloat(xMax)) {
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax = parseFloat(xMax);
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin = parseFloat(xMin);
+                }
 
-      if (yMin && yMax && parseFloat(yMin) < parseFloat(yMax)) {
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax = parseFloat(yMax);
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin = parseFloat(yMin);
-      }
+                if (yMin && yMax && parseFloat(yMin) < parseFloat(yMax)) {
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMax = parseFloat(yMax);
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yMin = parseFloat(yMin);
+                }
 
-      if (xScale && xScale > 0) {
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale = xScale;
-      } else {
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale = 4;
-      }
-      if (yScale && yScale > 0) {
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yScale = yScale;
-      } else {
-        _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yScale = 4;
-      }
-      (0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
-    });
-  }
+                if (xScale && xScale > 0) {
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale = xScale;
+                } else {
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale = 4;
+                }
+                if (yScale && yScale > 0) {
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yScale = yScale;
+                } else {
+                    _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.yScale = 4;
+                }
+                (0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
+            });
+    }
 
     document
         .querySelector('button[class="clear-window"]')
@@ -536,6 +499,7 @@ let windowElements = ['x-min', 'x-max', 'y-min', 'y-max', 'x-scale', 'y-scale'];
             (0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
         });
 
+    // render tabs
     let tabList = ["function", "table", "calculate"];
     for (let i = 0; i < tabList.length; i++) {
         document
@@ -571,9 +535,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "parseFunction": () => (/* binding */ parseFunction)
 /* harmony export */ });
+// https://github.com/silentmatt/expr-eval/tree/master
 let Parser = (__webpack_require__(/*! expr-eval */ "./node_modules/expr-eval/dist/index.mjs").Parser);
 
-// Node module expr eval
 var parser = new Parser();
 
 String.prototype.add = function (index, string) {
@@ -581,19 +545,20 @@ String.prototype.add = function (index, string) {
 };
 
 function parseFunction(expression) {
-    expression = expression.split(" ").join(" ");
+    expression = expression.split(" ").join("");
     expression = logify(expression);
     expression = addMultiplySymbols(expression);
     return parser.parse(expression);
 }
 
-// e.g. '3x' -> '3*x' , '(x+1)(x+2)' -> '(x+1)*(x+2)'
+// Add a multiplication symbol if it is ommited
+// e.g: '3x' -> '3*x', '(x+1)(x+2)' -> '(x+1)*(x+2)'
 function addMultiplySymbols(expression) {
-    /*  A multiplication is added in following conditions:
-      - number comes before a variable eg 3x or opening bracket 3(4) 
-      - closing bracket (4)5 -> 4 * 5 
-    */
     for (let i = 0; i < expression.length; i++) {
+        /* A multiplication symbol is added if a:
+    - number comes before a variable or opening bracket
+    - closing bracket or number comes before an opening bracket
+    */
         if (
             (!isNaN(expression[i]) || [")", "x"].includes(expression[i])) &&
             (expression[i + 1] == "(" ||
@@ -605,8 +570,8 @@ function addMultiplySymbols(expression) {
     return expression;
 }
 
-// Solving the log with any base
-// eg. log3(x)  -> ln(x)/ln(3)
+// Allow logs with any base
+// e.g 'log3(x)' -> 'ln(x)/ln(3)'
 function logify(expression) {
     // let log(x) be equivalent to log10(x)
     expression = expression.replace(/log\(/g, "log10(");
@@ -617,15 +582,15 @@ function logify(expression) {
         for (let i = 0; i < logExpressions.length; i++) {
             logExpressions[i] = fixBrackets(logExpressions[i]);
             let logBase = /log(\d+)\([^)]+\)/.exec(logExpressions[i])[1];
-            let logArg = fixBrackets(/log(\d+)\([^)]+\)/).exec(
-                logExpressions[i][1]
+            let logArg = fixBrackets(
+                /log\d+\(([^)]+)\)/.exec(logExpressions[i])[1]
             );
-            let oldExpressions = expression;
+            let oldExpression = expression;
             expression = expression.replace(
                 logExpressions[i],
                 `(ln(${logArg})/ln(${logBase}))`
             );
-            if (oldExpressions == expression) {
+            if (oldExpression == expression) {
                 return expression;
             }
         }
@@ -634,25 +599,25 @@ function logify(expression) {
     return expression;
 }
 
+// Fixes inequality between opening and closing brackets
+// e.g 'sin(x))' -> '(sin(x))', 'sin(x' -> 'sin(x)'
 function fixBrackets(expression) {
-    let openBrackets = 0;
+    let openingBrackets = 0;
     let closingBrackets = 0;
-
     for (let i = 0; i < expression.length; i++) {
         if (expression[i] == "(") {
-            openBrackets++;
+            openingBrackets++;
         } else if (expression[i] == ")") {
             closingBrackets++;
         }
     }
-
-    while (openBrackets > closingBrackets) {
+    while (openingBrackets > closingBrackets) {
         expression += ")";
         closingBrackets++;
     }
-    while (closingBrackets > openBrackets) {
+    while (closingBrackets > openingBrackets) {
         expression = "(" + expression;
-        openBrackets++;
+        openingBrackets++;
     }
     return expression;
 }
@@ -670,34 +635,28 @@ function fixBrackets(expression) {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "roundvalue": () => (/* binding */ roundvalue)
+/* harmony export */   "roundValue": () => (/* binding */ roundValue)
 /* harmony export */ });
-function roundvalue(number, precision = 3) {
+function roundValue(number, precision = 3) {
     if (Math.abs(number) == Infinity || number == NaN) {
         return "";
     }
-
     if (number == 0) {
         return 0;
     }
-
-    // Here we parase the number
     if (Math.abs(number) <= 0.0001) {
         return parseFloat(number.toPrecision(precision))
             .toExponential()
             .replace("e", "*10^");
     }
-
-    // Replacing e+
-    if (Math.abs(number) <= 100000) {
+    if (Math.abs(number) >= 100000) {
         return number.toPrecision(precision).replace("e+", "*10^");
     }
-
-    // Precision when 100000
     if (Math.abs(number) < 100000) {
         return parseFloat(number.toPrecision(precision));
     }
 }
+
 
 
 
@@ -719,9 +678,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "toPixelCoord": () => (/* binding */ toPixelCoord),
 /* harmony export */   "view": () => (/* binding */ view)
 /* harmony export */ });
-/* harmony import */ var _drawing__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./drawing */ "./src/drawing.js");
-/* harmony import */ var _functionParsing__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./functionParsing */ "./src/functionParsing.js");
+/* harmony import */ var _drawing_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./drawing.js */ "./src/drawing.js");
+/* harmony import */ var _functionParsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./functionParsing.js */ "./src/functionParsing.js");
 /* harmony import */ var _table_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./table.js */ "./src/table.js");
+// Problem: computers with bigger monitors
 
 
 
@@ -734,32 +694,32 @@ canvas.scale = 2;
 canvas.width *= canvas.scale;
 canvas.height *= canvas.scale;
 
-let draw = new _drawing__WEBPACK_IMPORTED_MODULE_0__.Draw(canvas);
+let draw = new _drawing_js__WEBPACK_IMPORTED_MODULE_0__.Draw(canvas);
 let view = {
-    xScale: 4, // diff in x axix
-    yScale: 4, // diff in y axis
-    xMin: -22.5, // min value in neg x axis
-    xMax: 22.5, // min value in postive x axis
-    yMin: -22.5, // same as above but for y axis
+    xScale: 4,
+    yScale: 4,
+    xMin: -22.5,
+    xMax: 22.5,
+    yMin: -22.5,
     yMax: 22.5,
     functions: {},
     point: {},
 };
 let expression = "";
 
-// Converstino of units to pixel
+// Units to px
 function toPixelCoord(x, y) {
     let pixelX = ((x - view.xMin) / (view.xMax - view.xMin)) * canvas.width;
     let pixelY = ((view.yMax - y) / (view.yMax - view.yMin)) * canvas.width;
     return { x: pixelX, y: pixelY };
 }
 
-// Rounding upto significant digit
+// Round scale to one or two significant digits
 function roundScale(scale) {
     if (scale >= 1 && scale <= 9) {
-        return (0,_functionParsing__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(scale.toPrecision(1));
+        return parseFloat(scale.toPrecision(1));
     } else {
-        return (0,_functionParsing__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(scale.toPrecision(2));
+        return parseFloat(scale.toPrecision(2));
     }
 }
 
@@ -776,11 +736,11 @@ function roundTickMark(number) {
         return parseFloat(number.toPrecision(4));
     }
     if (Math.abs(number) >= 100000) {
-        return number.toPrecision(2).replace("e", "*10^");
+        return number.toPrecision(2).replace("e+", "*10^");
     }
 }
 
-// Scale marks to x and y axis
+// Find a scale with about 10 tick marks on x and y axis
 function findAutoScale() {
     let xScale = view.xScale;
     let yScale = view.yScale;
@@ -791,15 +751,13 @@ function findAutoScale() {
         view.xScale <= 0 ||
         view.yScale <= 0
     ) {
-        console.log("Error: invalid settings");
+        console.log("Error: invalid window settings");
         xScale = 4;
         yScale = 4;
     }
-
     if (Math.abs(view.xScale) == Infinity) {
         xScale = 4;
-    }
-    if (Math.abs(view.yScale) == Infinity) {
+    } else if (Math.abs(view.yScale) == Infinity) {
         yScale = 4;
     }
 
@@ -825,72 +783,55 @@ function findAutoScale() {
     return { xScale, yScale };
 }
 
-// Drawing the Grid lines
 function drawGridLines() {
     ctx.lineWidth = canvas.scale;
-
     let xTickRange = {
         min: Math.ceil(view.xMin / view.xScale),
-        max: Math.floor(view.yMax / view.yScale),
+        max: Math.floor(view.xMax / view.xScale),
     };
-
     let yTickRange = {
         min: Math.ceil(view.yMin / view.yScale),
-        max: Math.ceil(view.yMax / view.yScale),
+        max: Math.floor(view.yMax / view.yScale),
     };
-
     for (let i = xTickRange.min; i <= xTickRange.max; i++) {
         if (i == 0) continue;
-
         let xDraw = toPixelCoord(i * view.xScale, 0).x;
         let yDraw = toPixelCoord(0, 0).y;
-
         draw.line(xDraw, 0, xDraw, canvas.height, "lightgray");
     }
-
     for (let i = yTickRange.min; i <= yTickRange.max; i++) {
         if (i == 0) continue;
-
         let xDraw = toPixelCoord(0, 0).x;
         let yDraw = toPixelCoord(0, i * view.yScale).y;
-
         draw.line(0, yDraw, canvas.width, yDraw, "lightgray");
     }
 }
 
-// Drawing the axis
+// Draws axes
 function drawAxes() {
     ctx.fillStyle = "black";
     ctx.lineWidth = 1.5 * canvas.scale;
-
-    /* Y axis */
+    // y axis
     draw.line(0, toPixelCoord(0, 0).y, canvas.width, toPixelCoord(0, 0).y);
+    // x axis
+    draw.line(toPixelCoord(0, 0).x, 0, toPixelCoord(0, 0).x, canvas.height);
 
-    /* X axis */
-    draw.line(toPixelCoord(0, 0).x, 0, 0, toPixelCoord(0, 0).x, canvas.height);
-
-    /* Marks on X axis
-     * textBaseline to make the line in middle of axis
-     * Look up https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D/textBaseline
-     * eg: min -2 and max: 3 signifies 2 ticks right of x-axies and 3 ticks left
-     */
+    // ticks on x axis
     ctx.textBaseline = "middle";
-
+    // ex: min: -2, max: 3, signifies 2 ticks right of x axis, and 3 ticks left
     let xTickRange = {
         min: Math.ceil(view.xMin / view.xScale),
-        max: Math.ceil(view.xMax / view.xScale),
+        max: Math.floor(view.xMax / view.xScale),
     };
 
     for (let i = xTickRange.min; i <= xTickRange.max; i++) {
         ctx.textAlign = "center";
 
         if (i == 0) continue;
-
         let xDisplayValue = roundTickMark(i * view.xScale);
         let xDraw = toPixelCoord(i * view.xScale, 0).x;
         let yDraw = toPixelCoord(0, 0).y;
-
-        // Marks and Labels
+        // ticks and labels
         draw.line(
             xDraw,
             yDraw + 5 * canvas.scale,
@@ -900,24 +841,21 @@ function drawAxes() {
         draw.text(xDisplayValue, xDraw, yDraw + 15 * canvas.scale);
     }
 
-    /* Marks on y axis
-     * eg: min: - 2 and max: -3 signifies 2 ticks above y axis and 3 ticks below
-     */
-
+    // ticks on y axis
+    // ex: min: -2, max: 3, signifies 2 ticks above y axis, and 3 ticks below
     let yTickRange = {
         min: Math.ceil(view.yMin / view.yScale),
-        max: Math.ceil(view.yMax / view.yScale),
+        max: Math.floor(view.yMax / view.yScale),
     };
 
     for (let i = yTickRange.min; i <= yTickRange.max; i++) {
-        ctx.textAlign = "end";
-
         if (i == 0) continue;
+        ctx.textAlign = "end";
 
         let yDisplayValue = roundTickMark(i * view.yScale);
         let xDraw = toPixelCoord(0, 0).x;
         let yDraw = toPixelCoord(0, i * view.yScale).y;
-
+        // ticks and labels
         draw.line(
             xDraw - 5 * canvas.scale,
             yDraw,
@@ -932,22 +870,17 @@ function drawGraph(expr, color = "black") {
     let precision = 500;
     let previousDerivative = 0;
     let previousX = 0;
-
     for (let i = 0; i < precision; i++) {
         let currentX = view.xMin + (i / precision) * (view.xMax - view.xMin);
         let nextX = view.xMin + ((i + 1) * (view.xMax - view.xMin)) / precision;
         let currentY = expr.evaluate({ x: currentX });
         let nextY = expr.evaluate({ x: nextX });
 
-        /* expr.evaluate expr-eval node module*/
-
         if (!currentY && !nextY) {
             continue;
         }
 
-        /* When the derivative of the graph changes from positive to negative,
-         * assume that it's trying to graph an asymptote
-         */
+        // When the derivative of the graph changes from positive to negative, assume that it's trying to graph an asymptote
         let currentDerivative = (nextY - currentY) / (nextX - currentX);
         if (currentDerivative * previousDerivative >= 0) {
             draw.line(
@@ -957,11 +890,9 @@ function drawGraph(expr, color = "black") {
                 toPixelCoord(0, nextY).y,
                 color
             );
-            /* Graphs more precisely around asymptotes.
-             * Fixes issue where lines that approach asymptotes suddenly cut off
-             */
+            // Graphs more precisely around asymptotes. Fixes issue where lines that approach asymptotes suddenly cut off
         } else {
-            /* If curve approaches asymptote from left side */
+            // If curve approaches asymptote from left side
             if (
                 Math.abs(previousDerivative) < Math.abs(currentDerivative) ||
                 !currentDerivative
@@ -1001,12 +932,10 @@ function drawGraph(expr, color = "black") {
 function drawPoint(x, y, color) {
     let pointX = toPixelCoord(x, 0).x;
     let pointY = toPixelCoord(0, y).y;
-
     draw.colorCircle(pointX, pointY, 5, color);
     ctx.textAlign = "left";
-
     draw.text(
-        `${roundTickMark(x)}, ${roundTickMark(y)}`,
+        `(${roundTickMark(x)}, ${roundTickMark(y)})`,
         pointX + 10,
         pointY + 15
     );
@@ -1068,7 +997,7 @@ function render() {
         }
         try {
             drawGraph(
-                (0,_functionParsing__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(view.functions[key].expression),
+                (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(view.functions[key].expression),
                 view.functions[key].color
             );
         } catch (e) {
@@ -1097,58 +1026,54 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "renderTable": () => (/* binding */ renderTable)
 /* harmony export */ });
-/* harmony import */ var _rendering__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rendering */ "./src/rendering.js");
-/* harmony import */ var _functionParsing__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./functionParsing */ "./src/functionParsing.js");
-/* harmony import */ var _math__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./math */ "./src/math.js");
-
+/* harmony import */ var _rendering_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rendering.js */ "./src/rendering.js");
+/* harmony import */ var _functionParsing_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./functionParsing.js */ "./src/functionParsing.js");
+/* harmony import */ var _math_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./math.js */ "./src/math.js");
 
 
 
 
 function renderTable() {
-    let tableElement = document.querySelector('table');
+  let tableElement = document.querySelector('table');
 
-    /* Table head/labels */
-    tableElement.innerHTML = '';
-    let headerRow = document.createElement('tr');
-    let xLabel = document.createElement('th');
+  // table headers / labels
+  tableElement.innerHTML = '';
+  let headerRow = document.createElement('tr');
+  let xLabel = document.createElement('th');
+  xLabel.textContent = 'x';
+  headerRow.appendChild(xLabel);
 
-    xLabel.textContent = 'x';
-    headerRow.appendChild(xLabel);
+  // values of tables
+  for (let key in _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.functions) {
+    let tableHeader = document.createElement('th');
+    tableHeader.textContent = key;
+    headerRow.appendChild(tableHeader);
+  }
+  tableElement.appendChild(headerRow);
 
+  let tblMin = Math.ceil(_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMin/_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale) * _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale;
+  let tblMax = Math.floor(_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xMax/_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale) * _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale;
+  let numberOfValues = (tblMax - tblMin)/_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.xScale;
 
-    /* Values of Table */
-    for (let key in _rendering__WEBPACK_IMPORTED_MODULE_0__.view.functions) {
-        let tableHeader = document.createElement('th');
-        tableHeader.textContent = key;
-        headerRow.appendChild(tableHeader);
+  for (let i = 0; i <= numberOfValues; i++) {
+    let x = tblMin + (tblMax - tblMin) * i/numberOfValues;
+    let tableRow = document.createElement('tr');
+    let xColumn = document.createElement('td');
+    xColumn.textContent = (0,_math_js__WEBPACK_IMPORTED_MODULE_2__.roundValue)(x);
+    tableRow.appendChild(xColumn);
+
+    for (let key in _rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.functions) {
+      let yColumn = document.createElement('td');
+      let expr = (0,_functionParsing_js__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(_rendering_js__WEBPACK_IMPORTED_MODULE_0__.view.functions[key].expression);
+      if (!expr) {
+        continue
+      }
+      yColumn.textContent = (0,_math_js__WEBPACK_IMPORTED_MODULE_2__.roundValue)(expr.evaluate({x}));
+
+      tableRow.appendChild(yColumn);
     }
-    tableElement.appendChild(headerRow);
-
-    let tblMin = Math.ceil(_rendering__WEBPACK_IMPORTED_MODULE_0__.view.xMin/_rendering__WEBPACK_IMPORTED_MODULE_0__.view.xScale) * _rendering__WEBPACK_IMPORTED_MODULE_0__.view.xScale;
-    let tblMax = Math.floor(_rendering__WEBPACK_IMPORTED_MODULE_0__.view.xMax/_rendering__WEBPACK_IMPORTED_MODULE_0__.view.xScale) * _rendering__WEBPACK_IMPORTED_MODULE_0__.view.xScale;
-    let numberofValues = (tblMax - tblMin)/_rendering__WEBPACK_IMPORTED_MODULE_0__.view.xScale;
-
-
-    for (let i = 0 ; i <= numberofValues; i++) {
-        let x = tblMin + (tblMax - tblMin) * i/numberofValues;
-        let tableRow = document.createElement('tr');
-        let xColumn = document.createElement('td');
-        xColumn.textContent = (0,_math__WEBPACK_IMPORTED_MODULE_2__.roundvalue)(x);
-        tableRow.appendChild(xColumn);
-
-        for ( let key in _rendering__WEBPACK_IMPORTED_MODULE_0__.view.functions) {
-            let yColumn = document.createElement('td');
-            let expr = (0,_functionParsing__WEBPACK_IMPORTED_MODULE_1__.parseFunction)(_rendering__WEBPACK_IMPORTED_MODULE_0__.view.functions[key].expression);
-            if(!expr) {
-                continue;
-            }
-
-            yColumn.textContent = (0,_math__WEBPACK_IMPORTED_MODULE_2__.roundvalue)(expr.evaluate({x}));
-            tableRow.appendChild(yColumn);
-        }
-        tableElement.appendChild(tableRow);
-    }
+    tableElement.appendChild(tableRow);
+  }
 }
 
 
@@ -3073,15 +2998,14 @@ var __webpack_exports__ = {};
   !*** ./src/index.js ***!
   \**********************/
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _rendering__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rendering */ "./src/rendering.js");
-/* harmony import */ var _eventHandling__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eventHandling */ "./src/eventHandling.js");
+/* harmony import */ var _rendering_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./rendering.js */ "./src/rendering.js");
+/* harmony import */ var _eventHandling_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./eventHandling.js */ "./src/eventHandling.js");
 
 
 
-
-(0,_eventHandling__WEBPACK_IMPORTED_MODULE_1__.renderTab)('functions');
-(0,_rendering__WEBPACK_IMPORTED_MODULE_0__.render)();
-(0,_eventHandling__WEBPACK_IMPORTED_MODULE_1__.eventHandling)();
+(0,_eventHandling_js__WEBPACK_IMPORTED_MODULE_1__.renderTab)('function');
+(0,_rendering_js__WEBPACK_IMPORTED_MODULE_0__.render)();
+(0,_eventHandling_js__WEBPACK_IMPORTED_MODULE_1__.eventHandling)();
 })();
 
 /******/ })()
