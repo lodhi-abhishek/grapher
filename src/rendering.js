@@ -274,59 +274,88 @@ function drawGraph(expr, color = "black") {
     }
 }
 
-function drawPoint(x,y,color) {
-    let pointX = toPixelCoord(x,0).x;
-    let pointY = toPixelCoord(0,y).y;
+function drawPoint(x, y, color) {
+    let pointX = toPixelCoord(x, 0).x;
+    let pointY = toPixelCoord(0, y).y;
 
-    draw.colorCircle(pointX,pointY,5,color);
-    ctx.textAlign = 'left';
+    draw.colorCircle(pointX, pointY, 5, color);
+    ctx.textAlign = "left";
 
-    draw.text(`${roundTickMark(x)}, ${roundTickMark(y)}`,pointX + 10, pointY + 15);
+    draw.text(
+        `${roundTickMark(x)}, ${roundTickMark(y)}`,
+        pointX + 10,
+        pointY + 15
+    );
 }
 
 // graphAroundAsymptote recursively graphs more accurately around asymptotes. It fixes the issue where the curve that approaches asymptotes suddenly cut off
-function graphAroundAsymptote(expr, aX1, aX2, previousDerivative, depth, color) {
-  let precision = 2;
-  for (let j = 0; j < precision; j++) {
-    let currentX = aX1 + (aX2 - aX1) * j/precision;
-    let nextX = aX1 + (aX2 - aX1) * (j + 1)/precision;
-    let currentY = expr.evaluate({ x: currentX });
-    let nextY = expr.evaluate({ x: nextX });
-    let currentDerivative = (nextY - currentY)/(nextX - currentX);
-    // Makes ure that when it is graphing around asymptotes, it doesn't accidently connect points through an asymptote
-    if (currentDerivative * previousDerivative >= 0) {
-      draw.line(toPixelCoord(currentX, 0).x, toPixelCoord(0, currentY).y, toPixelCoord(nextX, 0).x, toPixelCoord(0, nextY).y, color);
-    } else {
-      if (depth > 1) {
-        graphAroundAsymptote(expr, currentX, nextX, previousDerivative, depth - 1, color);
-      }
-      return;
+function graphAroundAsymptote(
+    expr,
+    aX1,
+    aX2,
+    previousDerivative,
+    depth,
+    color
+) {
+    let precision = 2;
+    for (let j = 0; j < precision; j++) {
+        let currentX = aX1 + ((aX2 - aX1) * j) / precision;
+        let nextX = aX1 + ((aX2 - aX1) * (j + 1)) / precision;
+        let currentY = expr.evaluate({ x: currentX });
+        let nextY = expr.evaluate({ x: nextX });
+        let currentDerivative = (nextY - currentY) / (nextX - currentX);
+        // Makes ure that when it is graphing around asymptotes, it doesn't accidently connect points through an asymptote
+        if (currentDerivative * previousDerivative >= 0) {
+            draw.line(
+                toPixelCoord(currentX, 0).x,
+                toPixelCoord(0, currentY).y,
+                toPixelCoord(nextX, 0).x,
+                toPixelCoord(0, nextY).y,
+                color
+            );
+        } else {
+            if (depth > 1) {
+                graphAroundAsymptote(
+                    expr,
+                    currentX,
+                    nextX,
+                    previousDerivative,
+                    depth - 1,
+                    color
+                );
+            }
+            return;
+        }
+        previousDerivative = currentDerivative;
     }
-    previousDerivative = currentDerivative;
-  }
 }
 
 function render() {
-  let autoScale = findAutoScale();
-  view.xScale = autoScale.xScale;
-  view.yScale = autoScale.yScale;
-  draw.rect(0, 0, canvas.width, canvas.height);
-  drawGridLines();
-  drawAxes();
-  for (let key in view.functions) {
-    if (!view.functions[key].expression) {
-      delete view.functions[key];
-      continue;
+    let autoScale = findAutoScale();
+    view.xScale = autoScale.xScale;
+    view.yScale = autoScale.yScale;
+    draw.rect(0, 0, canvas.width, canvas.height);
+    drawGridLines();
+    drawAxes();
+    for (let key in view.functions) {
+        if (!view.functions[key].expression) {
+            delete view.functions[key];
+            continue;
+        }
+        try {
+            drawGraph(
+                parseFunction(view.functions[key].expression),
+                view.functions[key].color
+            );
+        } catch (e) {
+            console.log(
+                view.functions[key].expression + " is not a valid function."
+            );
+        }
     }
-    try {
-      drawGraph(parseFunction(view.functions[key].expression), view.functions[key].color);
-    } catch(e) {
-      console.log(view.functions[key].expression + ' is not a valid function.')
-    }
-  }
-  // Draws point on graph closest to cursor
-  drawPoint(view.point.x, view.point.y, view.point.color);
-  renderTable();
+    // Draws point on graph closest to cursor
+    drawPoint(view.point.x, view.point.y, view.point.color);
+    renderTable();
 }
 
-export {canvas, ctx, draw, render, view, toPixelCoord, findAutoScale }
+export { canvas, ctx, draw, render, view, toPixelCoord, findAutoScale };
