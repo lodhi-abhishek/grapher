@@ -25,4 +25,4 @@ function roundvalue(number, precision = 3) {
     }
 }
 
-export { roundvalues }
+export { roundvalue }
