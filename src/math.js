@@ -24,3 +24,5 @@ function roundvalue(number, precision = 3) {
         return parseFloat(number.toPrecision(precision));
     }
 }
+
+export { roundvalues }
