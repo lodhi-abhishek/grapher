@@ -203,3 +203,130 @@ function drawAxes() {
         draw.text(yDisplayValue, xDraw - 10 * canvas.scale, yDraw);
     }
 }
+
+function drawGraph(expr, color = "black") {
+    let precision = 500;
+    let previousDerivative = 0;
+    let previousX = 0;
+
+    for (let i = 0; i < precision; i++) {
+        let currentX = view.xMin + (i / precision) * (view.xMax - view.xMin);
+        let nextX = view.xMin + ((i + 1) * (view.xMax - view.xMin)) / precision;
+        let currentY = expr.evaluate({ x: currentX });
+        let nextY = expr.evaluate({ x: nextX });
+
+        /* expr.evaluate expr-eval node module*/
+
+        if (!currentY && !nextY) {
+            continue;
+        }
+
+        /* When the derivative of the graph changes from positive to negative,
+         * assume that it's trying to graph an asymptote
+         */
+        let currentDerivative = (nextY - currentY) / (nextX - currentX);
+        if (currentDerivative * previousDerivative >= 0) {
+            draw.line(
+                toPixelCoord(currentX, 0).x,
+                toPixelCoord(0, currentY).y,
+                toPixelCoord(nextX, 0).x,
+                toPixelCoord(0, nextY).y,
+                color
+            );
+            /* Graphs more precisely around asymptotes.
+             * Fixes issue where lines that approach asymptotes suddenly cut off
+             */
+        } else {
+            /* If curve approaches asymptote from left side */
+            if (
+                Math.abs(previousDerivative) < Math.abs(currentDerivative) ||
+                !currentDerivative
+            ) {
+                graphAroundAsymptote(
+                    expr,
+                    currentX,
+                    nextX,
+                    previousDerivative,
+                    20,
+                    color
+                );
+                // If curve approaches asymptote from right side
+            } else {
+                graphAroundAsymptote(
+                    expr,
+                    nextX,
+                    previousX,
+                    currentDerivative,
+                    20,
+                    color
+                );
+            }
+            draw.line(
+                toPixelCoord(currentX, 0).x,
+                toPixelCoord(0, currentY).y,
+                toPixelCoord(nextX, 0).x,
+                toPixelCoord(0, currentY).y,
+                color
+            );
+        }
+        previousDerivative = currentDerivative;
+        previousX = currentX;
+    }
+}
+
+function drawPoint(x,y,color) {
+    let pointX = toPixelCoord(x,0).x;
+    let pointY = toPixelCoord(0,y).y;
+
+    draw.colorCircle(pointX,pointY,5,color);
+    ctx.textAlign = 'left';
+
+    draw.text(`${roundTickMark(x)}, ${roundTickMark(y)}`,pointX + 10, pointY + 15);
+}
+
+// graphAroundAsymptote recursively graphs more accurately around asymptotes. It fixes the issue where the curve that approaches asymptotes suddenly cut off
+function graphAroundAsymptote(expr, aX1, aX2, previousDerivative, depth, color) {
+  let precision = 2;
+  for (let j = 0; j < precision; j++) {
+    let currentX = aX1 + (aX2 - aX1) * j/precision;
+    let nextX = aX1 + (aX2 - aX1) * (j + 1)/precision;
+    let currentY = expr.evaluate({ x: currentX });
+    let nextY = expr.evaluate({ x: nextX });
+    let currentDerivative = (nextY - currentY)/(nextX - currentX);
+    // Makes ure that when it is graphing around asymptotes, it doesn't accidently connect points through an asymptote
+    if (currentDerivative * previousDerivative >= 0) {
+      draw.line(toPixelCoord(currentX, 0).x, toPixelCoord(0, currentY).y, toPixelCoord(nextX, 0).x, toPixelCoord(0, nextY).y, color);
+    } else {
+      if (depth > 1) {
+        graphAroundAsymptote(expr, currentX, nextX, previousDerivative, depth - 1, color);
+      }
+      return;
+    }
+    previousDerivative = currentDerivative;
+  }
+}
+
+function render() {
+  let autoScale = findAutoScale();
+  view.xScale = autoScale.xScale;
+  view.yScale = autoScale.yScale;
+  draw.rect(0, 0, canvas.width, canvas.height);
+  drawGridLines();
+  drawAxes();
+  for (let key in view.functions) {
+    if (!view.functions[key].expression) {
+      delete view.functions[key];
+      continue;
+    }
+    try {
+      drawGraph(parseFunction(view.functions[key].expression), view.functions[key].color);
+    } catch(e) {
+      console.log(view.functions[key].expression + ' is not a valid function.')
+    }
+  }
+  // Draws point on graph closest to cursor
+  drawPoint(view.point.x, view.point.y, view.point.color);
+  renderTable();
+}
+
+export {canvas, ctx, draw, render, view, toPixelCoord, findAutoScale }
