@@ -39,7 +39,6 @@ button {
     padding: 8px;
     background-color: var(--head-background);
     border: none;
-    text-align: center;
     font-size: 15px;
     border-radius: 4px;
 }
@@ -107,7 +106,7 @@ button:hover {
     align-items: center;
 }
 
-.function-tabs {
+.function-tab {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -120,7 +119,7 @@ button:hover {
     margin-left: 5px;
 }
 
-.function-tabs select {
+.function-tab select {
     padding: 5px 0;
     margin: 10px 0;
     font-size: 15px;
