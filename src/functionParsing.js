@@ -14,14 +14,15 @@ function parseFunction(expression) {
     return parser.parse(expression);
 }
 
-// Add a multiplication symbol if it is ommited
-// e.g: '3x' -> '3*x', '(x+1)(x+2)' -> '(x+1)*(x+2)'
+/* Multiplcation handling
+ * '3x' -> '3*x', '(x+1)(x+2)' -> '(x+1)*(x+2)'
+ */
 function addMultiplySymbols(expression) {
     for (let i = 0; i < expression.length; i++) {
         /* A multiplication symbol is added if a:
-    - number comes before a variable or opening bracket
-    - closing bracket or number comes before an opening bracket
-    */
+         - number comes before a variable or opening bracket
+         - closing bracket or number comes before an opening bracket
+        */
         if (
             (!isNaN(expression[i]) || [")", "x"].includes(expression[i])) &&
             (expression[i + 1] == "(" ||
@@ -33,10 +34,12 @@ function addMultiplySymbols(expression) {
     return expression;
 }
 
-// Allow logs with any base
-// e.g 'log3(x)' -> 'ln(x)/ln(3)'
+/* Allow logs with any base
+   'log3(x)' -> 'ln(x)/ln(3)' 
+*/
+
 function logify(expression) {
-    // let log(x) be equivalent to log10(x)
+    /* evaluating log as log10*/
     expression = expression.replace(/log\(/g, "log10(");
 
     let logRegex = /log\d+\([^)]+\)/;
@@ -62,7 +65,7 @@ function logify(expression) {
     return expression;
 }
 
-// Fixes inequality between opening and closing brackets
+// Fix Wrong Brackets Closing 
 // e.g 'sin(x))' -> '(sin(x))', 'sin(x' -> 'sin(x)'
 function fixBrackets(expression) {
     let openingBrackets = 0;

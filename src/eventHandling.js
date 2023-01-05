@@ -14,7 +14,7 @@ function mousePos(e) {
     };
 }
 
-// px to units
+// piexls to units
 function toUnitCoord(x, y) {
     let graphWidth = view.xMax - view.xMin;
     let graphHeight = view.yMax - view.yMin;
@@ -51,9 +51,9 @@ function addFunction() {
     select.value = functionColor;
 
     // Insert the function before the button
+    // document.querySelector('.functions').insertBefore(functionTemplate, document.querySelector('button'));
     document.querySelector(".functions").appendChild(functionTemplate);
-
-    /* When input is updated, update the graph */
+    // Whenever the input is updated, update the graph
     let event1 = input.addEventListener("input", graphFunctions);
     let event2 = select.addEventListener("change", graphFunctions);
     let event3 = functionTemplate
