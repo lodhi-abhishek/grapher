@@ -17,10 +17,10 @@
             <img src="img/default-favicon.ico" alt="icons" />
             <div class="header-title">
                 <div class="title">Grapher</div>
-                <div class="sub-title">by Abhishek</div>
             </div>
 
             <div class="tab" id="home">Home</div>
+            <div class="tab" id="github"><a href="https://github.com/lodhi-abhishek/grapher" target="_blank">Github</a></div>
             <div class="tab" id="about">About</div>
         </header>
         <div class="calculator home-page">
@@ -114,15 +114,21 @@
         </div>
         <div class="about-page">
             <h1>About</h1>
-            <p>
-                A graph plotting software very simple not too much complex built
-                usin javascript. Functions like polynomial, logarithmic, trignometric 
-                and exponential functions. Additionally, it can calculate the roots
-                and intercepts of the functions off of an inital guess.
-
-                We use webpack for bundling the javascript files and library called
-                <a href="https://npmjs.com/package/expr-eval">expr-eval</a>. 
+            <p class="about-head-content">
+                A graph plotting software very simple not too much complex built using javascript. 
+                Functions like Polynomial, Logarithmic, Trignometric and Exponential Functions. 
+                Additionally, it can calculate the roots and intercepts of Functions by giving the guess.
+                We use <a href="https://webpack.js.org/" target="_blank">webpack</a> for bundling the javascript files  & 
+                <a href="https://npmjs.com/package/expr-eval" target="_blank">expr-eval</a> node library for evaluating the
+                expression.For More Details Visit <a href="https://github.com/lodhi-abhishek/grapher" target="_blank">Github</a>
             </p>
+
+            <h2>Example</h2>
+            <p class="example-content">
+                Here the equation was y = x<sup>2</sup>
+            </p>
+            <img src="./img/equation.png" alt="equations-graph" style="width: 400px;">
+            <img src="./img/table.png" alt="table-graph" style="float: right;">
         </div>
         <script src="main.js"></script>
     </body>

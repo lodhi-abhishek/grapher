@@ -57,6 +57,7 @@ button:hover {
 }
 
 .tab {
+    font-size: 18px;
     margin: 0 20px;
     cursor: pointer;
 }
@@ -69,6 +70,7 @@ button:hover {
 
 .about-page {
     margin: 50px;
+    font-size: 1.2em;
 }
 
 /* Calculator controls*/
