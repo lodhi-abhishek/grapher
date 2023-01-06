@@ -56,4 +56,24 @@ The result of the equation entered by user is show here
 | $2^x$           | Orange |
 | $cos(x)$        | Green  |
 
+---
 ### Table
+
+Render the Table of X-Coordinate and Y-Coordinate based of canvas and functions entered
+eg for equation $y=x^2$
+
+<img src="./dist/img/table.png" alt="table-equation">
+
+## Newton's method
+Newton's method is an algorithm that estimates the root of a function *f(x)*. It is used in this graphing calculator. The algorithm takes in an inital guess *x<sub>0</sub>*, and applies this recursion finitely many times:
+
+$$
+x_{n+1} = x_{n} - f(x_{n})/f'(x_{n})
+$$.
+
+Note: the function $f'$ is the derivative of $f$. The estimated root $x_{n}$ becomes more accurate as $n$ increases
+
+
+## Special Thanks
+
+I would like to thanks [AaronHe7](https://github.com/AaronHe7/) where i took some help and inspirations for this project.
