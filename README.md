@@ -69,7 +69,7 @@ Newton's method is an algorithm that estimates the root of a function *f(x)*. It
 
 $$
 x_{n+1} = x_{n} - f(x_{n})/f'(x_{n})
-$$.
+$$
 
 Note: the function $f'$ is the derivative of $f$. The estimated root $x_{n}$ becomes more accurate as $n$ increases
 
