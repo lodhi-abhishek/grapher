@@ -73,7 +73,8 @@ $$
 
 Note: the function $f'$ is the derivative of $f$. The estimated root $x_{n}$ becomes more accurate as $n$ increases
 
-
+<!--
 ## Special Thanks
 
 I would like to thanks [AaronHe7](https://github.com/AaronHe7/) where i took some help and inspirations for this project.
+-->
